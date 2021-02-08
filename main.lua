@@ -130,6 +130,11 @@ do
 
     V.LoadPreview = V.PositionSettings:addButton("Load Model", function()
         if V.Indicator and V.Build then
+            if V.Build.Model then
+                V.Indicator.Parent = workspace
+                V.Build.Model:Destroy()
+            end
+
             V.ChangingPosition = false
             V.PositionSettings:updateToggle(V.ChangePositionToggle, "Change Position", false)
             V.Build:Init()
@@ -177,8 +182,6 @@ do
         if V.Build then
             if V.Build.Model then
                 V.Build:Render(V.ShowPreview)
-            else
-                Schematica:Notify("Error", "Model doesn't exist")
             end
         end
     end)

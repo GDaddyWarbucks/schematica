@@ -167,7 +167,9 @@ do
     V.BuildSection = Build:addSection("Build")
     V.BuildSection:addToggle("Show Build", true, function(willShow)
         V.ShowPreview = willShow
-
+        V.Indicator.Transparency = willShow and 0.5 or 1
+        Handles.Parent = willShow and game.CoreGui or game.ReplicatedStorage
+        
         if V.Build then
             if V.Build.Model then
                 V.Build:Render(V.ShowPreview)

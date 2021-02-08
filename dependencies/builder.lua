@@ -30,7 +30,7 @@ do
             if v:IsA("BasePart") then
                 v.CanCollide = false
                 if v.Transparency < 1 then
-                    v.Transparency = Visibility
+                    v.Transparency = self.Visibility
                 end
             end
         end

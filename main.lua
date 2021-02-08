@@ -303,23 +303,23 @@ do
     EndHandles.Visible = false
     EndHandles.Parent = game.CoreGui
 
-    local CF1
-    local CF2
+    V.CF1 = 0
+    V.CF2 = 0
 
-    V.Connections.StartHandleDown = StartHandles.MouseButton1Down:connect(function()
-        CF1 = StartHandles.Adornee.CFrame
+    V.Connections.StartHandleDown = StartHandles.MouseButton1Down:Connect(function()
+        V.CF1 = StartHandles.Adornee.CFrame
     end)
 
     V.Connections.StartHandleDrag = StartHandles.MouseDrag:Connect(function(Face, Distance)
-        StartHandles.Adornee.CFrame = CF1 + Vector3.FromNormalId(Face) * (round(Distance / 3) * 3)
+        StartHandles.Adornee.CFrame = V.CF1 + Vector3.FromNormalId(Face) * (round(Distance / 3) * 3)
     end)
 
     V.Connections.EndHandleDown = EndHandles.MouseButton1Down:connect(function()
-        CF2 = EndHandles.Adornee.CFrame
+        V.CF2 = EndHandles.Adornee.CFrame
     end)
 
     V.Connections.EndHandleDrag = EndHandles.MouseDrag:Connect(function(Face, Distance)
-        EndHandles.Adornee.CFrame = CF2 + Vector3.FromNormalId(Face) * (round(Distance / 3) * 3)
+        EndHandles.Adornee.CFrame = V.CF2 + Vector3.FromNormalId(Face) * (round(Distance / 3) * 3)
     end)
 
     V.Model.Parent = workspace

@@ -12,7 +12,7 @@ do
     local Place = game.ReplicatedStorage.Remotes.Functions.CLIENT_BLOCK_PLACE_REQUEST
     local Hit = game.ReplicatedStorage.Remotes.Functions.CLIENT_BLOCK_HIT_REQUEST
 
-    local Heartbeat = game.RunService.Heartbeat
+    local Heartbeat = game:GetService("RunService").Heartbeat
 
     function Printer.new(Start, End, Block)
         local self = setmetatable({}, Printer)

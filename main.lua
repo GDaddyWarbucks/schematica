@@ -77,7 +77,7 @@ do
 
         if isfile("builds/" .. V.BuildId .. ".s") then
             if V.Build then 
-                V.Build.Model.PrimaryPart.Parent = workspace
+                V.Indicator.Parent = workspace
                 V.Build:Destroy()
             end
             local Data = Http:JSONDecode(readfile("builds/" .. V.BuildId .. ".s"))

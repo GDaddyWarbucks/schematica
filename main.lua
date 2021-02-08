@@ -1,4 +1,4 @@
-local baseUrl = "https://raw.githubusercontent.com/Jxl-s/schematica/main/"
+local baseUrl = "https://raw.githubusercontent.com/Jxl-v/schematica/main/"
 local function require_module(module) return loadstring(game:HttpGet(string.format("%sdependencies/%s", baseUrl, module)))() end
 
 local Http = game.HttpService

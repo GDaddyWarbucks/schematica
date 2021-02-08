@@ -87,10 +87,11 @@ do
             local Response = Http:JSONDecode(game:HttpGet(env.get .. V.BuildId))
             if Response.success == true then
                 if V.Build then 
-                    V.Build.Model.PrimaryPart.Parent = workspace
+                    V.Indicator.Parent = workspace
                     V.Build:Destroy()
                 end
                 writefile("builds/" .. V.BuildId .. ".s", game.HttpService:JSONEncode(Response.data))
+                V.Build = Builder.new(Data)
                 V.SelectSection:updateButton(V.Download, "Downloaded!")
             else
                 if Response.status == 404 then
@@ -142,6 +143,7 @@ do
             V.Build:SetVisibility(V.Visibility)
             V.Build:Render(V.ShowPreview)
 
+            print('rendering it')
             local Box = V.Build.Model:GetBoundingBox()
             V.Build:SetCFrame(V.Indicator.CFrame)    
             
@@ -228,6 +230,8 @@ do
     end)
 end
 
+print("build section done")
+
 do
     local Http = game.HttpService
     local round = math.round
@@ -257,6 +261,8 @@ do
             V.ChangeStart = false
         end
     end)
+
+    print("points loaded")
 
     V.Model = Instance.new("Model")
 
@@ -303,6 +309,8 @@ do
     EndHandles.Visible = false
     EndHandles.Parent = game.CoreGui
 
+    print("instances loaded")
+
     V.CF1 = 0
     V.CF2 = 0
 
@@ -322,7 +330,18 @@ do
         EndHandles.Adornee.CFrame = V.CF2 + Vector3.FromNormalId(Face) * (round(Distance / 3) * 3)
     end)
 
+    print("connections loaded")
+
     V.Model.Parent = workspace
+    
+    V.Points:addToggle("Show Outline", true, function(willShow)
+        V.ShowOutline = willShow
+        V.IndicatorStart.Transparency = willShow and 0.5 or 1
+        V.IndicatorEnd.Transparency = willShow and 0.5 or 1
+        V.Model.Parent = willShow and workspace or game.ReplicatedStorage
+        StartHandles.Visible = willShow
+        EndHandles.Visible = willShow
+    end)
 
     V.Connections.Click = Mouse.Button1Down:Connect(function()
         if Mouse.Target then
@@ -357,21 +376,13 @@ do
     end)
 
     V.Final = Save:addSection("Save")
-    V.Final:addToggle("Show Outline", true, function(willShow)
-        V.ShowOutline = willShow
-        V.IndicatorStart.Transparency = willShow and 0.5 or 1
-        V.IndicatorEnd.Transparency = willShow and 0.5 or 1
-        V.Model.Parent = willShow and workspace or game.ReplicatedStorage
-        --[[StartHandles.Parent = willShow and V.Model or game.ReplicatedStorage
-        EndHandles.Parent = willShow and V.Model or game.ReplicatedStorage
-        SelectionBox]]
-        --StartHandles.Visible = willShow
-        --EndHandles.Visible = willShow
-        --SelectionBox.Visible = willShow
-    end)
 
     V.Final:addTextbox("Custom Name", "", function(name)
         V.BuildName = name
+    end)
+
+    V.Final:addToggle("Unlisted", false, function(isPrivate)
+        V.Private = isPrivate and "Private" or "Public"
     end)
 
     V.Final:addButton("Save Area", function()
@@ -383,7 +394,8 @@ do
             Body = game.HttpService:JSONEncode(Data);
             Headers = {
                 ["Content-Type"] = "application/json",
-                ["Build-Name"] = V.BuildName == "" and "Untitled" or V.BuildName
+                ["Build-Name"] = V.BuildName == "" and "Untitled" or V.BuildName;
+                Private = V.Private
             };
             Method = "POST"
         })
@@ -635,7 +647,12 @@ do
         return b
     end
 
-    Other:addSection("Save Closest Island"):addButton("Save", function()
+    local ClosestIslandSave = Other:addSection("Save Closest Island")
+    ClosestIslandSave:addToggle("Unlisted", false, function(isPrivate)
+        V.Private = isPrivate and "Private" or "Public"
+    end)
+
+    ClosestIslandSave:addButton("Save", function()
         local Closest = closestIsland()
         if Closest then
             local Username = getUsernameFromUserId(Closest.UserId.Value) or "An unknown person"
@@ -649,7 +666,8 @@ do
                 Body = game.HttpService:JSONEncode(Data);
                 Headers = {
                     ["Content-Type"] = "application/json";
-                    ["Build-Name"] = Username .. "'s Island"
+                    ["Build-Name"] = Username .. "'s Island";
+                    Private = V.Private;
                 };
                 Method = "POST"
             })
@@ -677,7 +695,6 @@ do
                 Output.Blocks[Block] = {}
                 for i, v in next, Array do
                     local Split = strArray(v:split(","))
-                    print(Split[3])
                     if Split[1] < LowX then
                         LowX = Split[1]
                     elseif Split[1] > HighX then
@@ -723,7 +740,8 @@ do
                 Body = readfile("builds/" .. V.ToUpload);
                 Headers = {
                     ["Content-Type"] = "application/json",
-                    ["Build-Name"] = V.ToUpload:gsub("%.(.+)", "")
+                    ["Build-Name"] = V.ToUpload:gsub("%.(.+)", "");
+                    Private = "Public"
                 };
                 Method = "POST"
             })

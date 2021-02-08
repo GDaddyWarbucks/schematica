@@ -20,6 +20,7 @@ do
         self.Data = Data.Blocks
         self.Size = Vector3.new(Data.Size[1], Data.Size[2], Data.Size[3])
         self.Abort = false
+        self.Visibility = 0.5
 
         return self
     end
@@ -29,7 +30,7 @@ do
             if v:IsA("BasePart") then
                 v.CanCollide = false
                 if v.Transparency < 1 then
-                    v.Transparency = 0.5
+                    v.Transparency = Visibility
                 end
             end
         end
@@ -71,6 +72,15 @@ do
         if self.Model then
             self.Model:SetPrimaryPartCFrame(CF)
             self.Model.PrimaryPart.CFrame = CFrame.new(CF.Position.X, CF.Position.Y, CF.Position.Z, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+        end
+    end
+
+    function Builder:SetVisibility(Value)
+        self.Visibility = Value
+        if self.Model and self.Model.Parent == workspace then
+            for i, v in next, self.Model:GetChildren() do
+                self:SetupBlock(v)
+            end
         end
     end
 

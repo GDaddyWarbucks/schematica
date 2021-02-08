@@ -3,6 +3,12 @@ local Printer = {}
 do
     Printer.__index = Printer
 
+    setmetatable(Printer, {
+        __tostring = function()
+            return "Printer"
+        end
+    })
+    
     local Place = game.ReplicatedStorage.Remotes.Functions.CLIENT_BLOCK_PLACE_REQUEST
     local Hit = game.ReplicatedStorage.Remotes.Functions.CLIENT_BLOCK_HIT_REQUEST
 
@@ -79,11 +85,15 @@ do
         local Start, End = Vector3.new(math.min(self.Start.X, self.End.X), math.min(self.Start.Y, self.End.Y), math.min(self.Start.Z, self.End.Z)), Vector3.new(math.max(self.Start.X, self.End.X), math.max(self.Start.Y, self.End.Y), math.max(self.Start.Z, self.End.Z))
         local Region = Region3.new(Start, End)
         for i, v in next, workspace:FindPartsInRegion3(Region, nil, math.huge) do
-            if self.Abort then self.Abort = false break end
+            if self.Abort then 
+                self.Abort = false 
+                Callback.End()
+                break 
+            end
             if v.Name ~= "bedrock" and (not v:FindFirstChild("portal-to-spawn")) and v.Parent and v.Parent.Name == "Blocks" then
                 local time = os.time()
                 repeat
-                    if v ~= nil and v:IsDescendantOf(workspace) and self.Abort == false then
+                    if v ~= nil and v:IsDescendantOf(workspace) then
                         Callback.Build(v.Position)
                         Hit:InvokeServer({
                             player_tracking_category = "join_from_web";
@@ -94,7 +104,7 @@ do
                         })
                     end
                     wait()
-                until v == nil or (not v:IsDescendantOf(workspace)) or os.time() - time > 15
+                until v == nil or (not v:IsDescendantOf(workspace)) or os.time() - time > 15 or self.Abort == true
             end
         end
 

@@ -243,7 +243,8 @@ do
     V.ChangeEnd = false
     V.ShowOutline = true
     V.BuildName = "Untitled"
-
+    V.Private = false
+    
     V.Points = Save:addSection("Set Points")
 
     V.Point1 = V.Points:addToggle("Change Start Point", false, function(willChange)
@@ -633,6 +634,7 @@ do
     local ConvertOldSection = Other:addSection("Convert Old Build")
 
     local V = {}
+    V.Private = false
     ConvertOldSection:addTextbox("File", "", function(File)
         V.File = File
     end)
@@ -667,7 +669,7 @@ do
                 Headers = {
                     ["Content-Type"] = "application/json";
                     ["Build-Name"] = Username .. "'s Island";
-                    Private = V.Private;
+                    ["Private"] = V.Private;
                 };
                 Method = "POST"
             })

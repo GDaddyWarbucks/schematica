@@ -51,17 +51,17 @@ do
     Handles.Parent = game.CoreGui
     Handles.Visible = false
 
-    local CF
+    V.DragCF = 0
 
     V.Connections.HandleDown = Handles.MouseButton1Down:Connect(function()
-        CF = Handles.Adornee.CFrame
+        V.DragCF = Handles.Adornee.CFrame
     end)
 
     V.Connections.HandleDrag = Handles.MouseDrag:Connect(function(Face, Distance)
         if V.Indicator.Parent.ClassName == "Model" then
-            V.Indicator.Parent:SetPrimaryPartCFrame(CF + Vector3.FromNormalId(Face) * (round(Distance / 3) * 3))
+            V.Indicator.Parent:SetPrimaryPartCFrame(V.DragCF + Vector3.FromNormalId(Face) * (round(Distance / 3) * 3))
         else
-            V.Indicator.CFrame = CF + Vector3.FromNormalId(Face) * (round(Distance / 3) * 3)
+            V.Indicator.CFrame = V.DragCF + Vector3.FromNormalId(Face) * (round(Distance / 3) * 3)
         end
     end)
     --//UI
@@ -439,23 +439,23 @@ do
     EndHandles.Visible = false
     EndHandles.Parent = game.CoreGui
 
-    local CF1
-    local CF2
+    V.DragCF1 = 0
+    V.DragCF2 = 0
 
     V.Connections.StartHandleDown = StartHandles.MouseButton1Down:Connect(function()
-        CF1 = StartHandles.Adornee.CFrame
+        V.DragCF1 = StartHandles.Adornee.CFrame
     end)
 
     V.Connections.StartHandleDrag = StartHandles.MouseDrag:Connect(function(Face, Distance)
-        StartHandles.Adornee.CFrame = CF1 + Vector3.FromNormalId(Face) * (round(Distance / 3) * 3)
+        StartHandles.Adornee.CFrame = V.DragCF1 + Vector3.FromNormalId(Face) * (round(Distance / 3) * 3)
     end)
 
     V.Connections.EndHandleDown = EndHandles.MouseButton1Down:connect(function()
-        CF2 = EndHandles.Adornee.CFrame
+        V.DragCF2 = EndHandles.Adornee.CFrame
     end)
 
     V.Connections.EndHandleDrag = EndHandles.MouseDrag:Connect(function(Face, Distance)
-        EndHandles.Adornee.CFrame = CF2 + Vector3.FromNormalId(Face) * (round(Distance / 3) * 3)
+        EndHandles.Adornee.CFrame = V.DragCF2 + Vector3.FromNormalId(Face) * (round(Distance / 3) * 3)
     end)
 
     V.Model.Parent = workspace

@@ -185,11 +185,10 @@ do
 
     print("show build toggle loaded")
 
-    V.BuildSection:addTextbox("Block transparency", "0.5", function(newTransparency)
-        if tonumber(newTransparency) then
+    V.BuildSection:addTextbox("Block transparency", "0.5", function(newTransparency, lost)
+        if lost and tonumber(newTransparency) then
             V.Visibility = tonumber(newTransparency)
             if V.Build then
-                print(V.Visibility)
                 V.Build:SetVisibility(V.Visibility)
             end
         end

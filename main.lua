@@ -261,7 +261,8 @@ do
 
     local SelectionBox = Instance.new("SelectionBox")
     SelectionBox.Adornee = V.Model
-    SelectionBox.Color3 = Color3.new(1, 0, 0)
+    SelectionBox.SurfaceColor3 = Color3.new(1, 0, 0)
+    SelectionBox.Color3 = Color3.new(1, 1, 1)
     SelectionBox.Parent = V.Model
     SelectionBox.LineThickness = 0.1
     SelectionBox.SurfaceTransparency = 0.8
@@ -419,7 +420,8 @@ do
 
     local SelectionBox = Instance.new("SelectionBox")
     SelectionBox.Adornee = V.Model
-    SelectionBox.Color3 = Color3.new(0, 1, 0)
+    SelectionBox.SurfaceColor3 = Color3.new(0, 1, 0)
+    SelectionBox.Color3 = Color3.new(1, 1, 1)
     SelectionBox.Parent = V.Model
     SelectionBox.LineThickness = 0.1
     SelectionBox.SurfaceTransparency = 0.8

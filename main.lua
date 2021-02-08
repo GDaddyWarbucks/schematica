@@ -71,7 +71,7 @@ do
         V.BuildId = buildId
     end)
 
-    V.Download = V.SelectSection:addButton("Download", function()
+    V.Download = V.SelectSection:addButton("Download / Load", function()
         V.SelectSection:updateButton(V.Download, "Please wait ...")
 
         if isfile("builds/" .. V.BuildId) then

@@ -18,7 +18,7 @@ end
 
 if not isfolder("builds") then makefolder("builds") end
 
-local request = syn.request
+local request = syn.request or request or http_request 
 
 local Schematica = Library.new("Schematica")
 local Mouse = Player:GetMouse()
@@ -74,14 +74,14 @@ do
     V.Download = V.SelectSection:addButton("Download / Load", function()
         V.SelectSection:updateButton(V.Download, "Please wait ...")
 
-        if isfile("builds/" .. V.BuildId) then
+        if isfile("builds/" .. V.BuildId .. ".s") then
             if V.Build then 
                 V.Build.Model.PrimaryPart.Parent = workspace
                 V.Build:Destroy()
             end
-            local Data = Http:JSONDecode(readfile("builds/" .. V.BuildId))
+            local Data = Http:JSONDecode(readfile("builds/" .. V.BuildId .. ".s"))
             V.Build = Builder.new(Data)
-            V.SelectSection:updateButton(V.Download, "Found File!")
+            V.SelectSection:updateButton(V.Download, "Found file, loading it")
         else
             local Response = Http:JSONDecode(game:HttpGet(env.get .. V.BuildId))
             if Response.success == true then
@@ -93,7 +93,7 @@ do
                 V.SelectSection:updateButton(V.Download, "Downloaded!")
             else
                 if Response.status == 404 then
-                    V.SelectSection:updateButton(V.Download, "Not Found")
+                    V.SelectSection:updateButton(V.Download, "Not found")
                 elseif Response.status == 400 then
                     V.SelectSection:updateButton(V.Download, "Error")
                 end
@@ -201,7 +201,6 @@ do
 end
 
 do
-    local function closestIsland() local L_6_ = workspace:WaitForChild("Islands"):GetChildren() local L_7_ = Player.Character.HumanoidRootPart.Position for L_8_forvar0 = 1, #L_6_ do local L_9_ = L_6_[L_8_forvar0] if L_9_:FindFirstChild("Root") and math.abs(L_9_.PrimaryPart.Position.X - L_7_.X) <= 1000 and math.abs(L_9_.PrimaryPart.Position.Z - L_7_.Z) <= 1000 then return L_9_ end end return workspace.Islands:FindFirstChild(tostring(Player.UserId).."-island") end
     local Http = game.HttpService
     local round = math.round
     local Save = Schematica:addPage("Save Builds")
@@ -227,34 +226,6 @@ do
         if willChange then
             V.Points:updateToggle(V.Point1, "Change Start Point", false)
             V.ChangeStart = false
-        end
-    end)
-    
-    Save:addSection("Save Closest Island"):addButton("Save", function()
-        local Closest = closestIsland()
-        if Closest then
-            local Center, Size = Closest:GetBoundingBox()
-
-            local Serialize = Serializer.new(Center.Position - Size / 2, Center.Position + Size / 2)
-            local Data = Serialize:Serialize()
-
-            local Response = request({
-                Url = env.post;
-                Body = game.HttpService:JSONEncode(Data);
-                Headers = {
-                    ["Content-Type"] = "application/json"
-                };
-                Method = "POST"
-            })
-
-            local JSONResponse = Http:JSONDecode(Response.Body)
-            if JSONResponse.status == "success" then
-                setclipboard(JSONResponse.output)
-                writefile("builds/" .. JSONResponse.output, game.HttpService:JSONEncode(Data))
-                Schematica:Notify("Build Uploaded", "Copied to clipboard")
-            else
-                Schematica:Notify("Error", JSONResponse.status)
-            end
         end
     end)
 
@@ -382,7 +353,7 @@ do
         local JSONResponse = Http:JSONDecode(Response.Body)
         if JSONResponse.status == "success" then
             setclipboard(JSONResponse.output)
-            writefile("builds/" .. JSONResponse.output, game.HttpService:JSONEncode(Data))
+            writefile("builds/" .. JSONResponse.output .. ".s", game.HttpService:JSONEncode(Data))
             Schematica:Notify("Build Uploaded", "Copied to clipboard")
         else
             Schematica:Notify("Error", JSONResponse.status)
@@ -581,6 +552,8 @@ do
 end
 
 do
+    local function closestIsland() local L_6_ = workspace:WaitForChild("Islands"):GetChildren() local L_7_ = Player.Character.HumanoidRootPart.Position for L_8_forvar0 = 1, #L_6_ do local L_9_ = L_6_[L_8_forvar0] if L_9_:FindFirstChild("Root") and math.abs(L_9_.PrimaryPart.Position.X - L_7_.X) <= 1000 and math.abs(L_9_.PrimaryPart.Position.Z - L_7_.Z) <= 1000 then return L_9_ end end return workspace.Islands:FindFirstChild(tostring(Player.UserId).."-island") end
+
     local Http = game.HttpService
     local Other = Schematica:addPage("Other")
     local ConvertOldSection = Other:addSection("Convert Old Build")
@@ -600,6 +573,33 @@ do
         return b
     end
 
+    Other:addSection("Save Closest Island"):addButton("Save", function()
+        local Closest = closestIsland()
+        if Closest then
+            local Center, Size = Closest:GetBoundingBox()
+
+            local Serialize = Serializer.new(Center.Position - Size / 2, Center.Position + Size / 2)
+            local Data = Serialize:Serialize()
+
+            local Response = request({
+                Url = env.post;
+                Body = game.HttpService:JSONEncode(Data);
+                Headers = {
+                    ["Content-Type"] = "application/json"
+                };
+                Method = "POST"
+            })
+
+            local JSONResponse = Http:JSONDecode(Response.Body)
+            if JSONResponse.status == "success" then
+                setclipboard(JSONResponse.output)
+                writefile("builds/" .. JSONResponse.output .. ".s", game.HttpService:JSONEncode(Data))
+                Schematica:Notify("Build Uploaded", "Copied to clipboard")
+            else
+                Schematica:Notify("Error", JSONResponse.status)
+            end
+        end
+    end)
     ConvertOldSection:addButton("Convert", function()
         if isfile("builds/" .. V.File) then
             local Data = Http:JSONDecode(readfile("builds/" .. V.File))

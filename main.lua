@@ -128,7 +128,7 @@ do
 
     print("click connection loaded")
 
-    V.LoadPreview = V.PositionSettings:addButton("Load Preview", function()
+    V.LoadPreview = V.PositionSettings:addButton("Load Model", function()
         if V.Indicator and V.Build then
             V.ChangingPosition = false
             V.PositionSettings:updateToggle(V.ChangePositionToggle, "Change Position", false)
@@ -196,7 +196,7 @@ do
 
     print("dropdown loaded")
     V.BuildSection:addButton("Start Building", function()
-        if V.Build then
+        if V.Build and V.Build.Model then
             local OriginalPosition = Player.Character.HumanoidRootPart.CFrame
             V.Build:Build({
                 Start = function()
@@ -211,6 +211,8 @@ do
                     Player.Character.HumanoidRootPart.CFrame = OriginalPosition
                 end;
             })
+        else
+            Schematica:Notify("Error", "The model is not loaded yet, load it by pressing on Load Model")
         end
     end)
 

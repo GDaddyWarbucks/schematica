@@ -77,7 +77,7 @@ do
 
     function Builder:SetVisibility(Value)
         self.Visibility = Value
-        if self.Model and self.Model.Parent == workspace then
+        if self.Model then
             for i, v in next, self.Model:GetChildren() do
                 self:SetupBlock(v)
             end

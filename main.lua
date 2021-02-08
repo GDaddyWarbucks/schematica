@@ -536,28 +536,32 @@ do
     end)
 
     V.Final:addButton("Print Area", function()
-        if Player.Character:FindFirstChildOfClass("Tool") then
-            local OriginalPosition = Player.Character.HumanoidRootPart.CFrame
-
-            V.Printing = Printer.new(V.IndicatorStart.Position, V.IndicatorEnd.Position)
-
-            local BlockType = Player.Character:FindFirstChildOfClass("Tool").Name:gsub("Seeds", "")
-            V.Printing:SetBlock(BlockType)
-            V.Printing:Build({
-                Start = function()
-                    Velocity = Instance.new("BodyVelocity", Player.Character.HumanoidRootPart)
-                    Velocity.Velocity = Vector3.new(0, 0, 0)
-                end;
-                Build = function(Pos)
-                    Player.Character.HumanoidRootPart.CFrame = CFrame.new(Pos + Vector3.new(10, 10, 10))
-                end;
-                End = function()
-                    Velocity:Destroy()
-                    Player.Character.HumanoidRootPart.CFrame = OriginalPosition
-                end;
-            })
+        if V.Start and V.End then
+            if Player.Character:FindFirstChildOfClass("Tool") then
+                local OriginalPosition = Player.Character.HumanoidRootPart.CFrame
+    
+                V.Printing = Printer.new(V.IndicatorStart.Position, V.IndicatorEnd.Position)
+    
+                local BlockType = Player.Character:FindFirstChildOfClass("Tool").Name:gsub("Seeds", "")
+                V.Printing:SetBlock(BlockType)
+                V.Printing:Build({
+                    Start = function()
+                        Velocity = Instance.new("BodyVelocity", Player.Character.HumanoidRootPart)
+                        Velocity.Velocity = Vector3.new(0, 0, 0)
+                    end;
+                    Build = function(Pos)
+                        Player.Character.HumanoidRootPart.CFrame = CFrame.new(Pos + Vector3.new(10, 10, 10))
+                    end;
+                    End = function()
+                        Velocity:Destroy()
+                        Player.Character.HumanoidRootPart.CFrame = OriginalPosition
+                    end;
+                })
+            else
+                Schematica:Notify("Error", "Please hold a block")
+            end
         else
-            Schematica:Notify("Error", "Please hold a block")
+            Schematica:Notify("Error", "Please set the two points")
         end
     end)
 

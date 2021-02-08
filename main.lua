@@ -68,7 +68,7 @@ do
 
     V.SelectSection = Build:addSection("Selecting Build")
     V.BuildIdBox = V.SelectSection:addTextbox("Build ID", "0", function(buildId)
-        V.BuildId = buildId
+        V.BuildId = buildId:gsub("%s", "")
     end)
 
     V.Download = V.SelectSection:addButton("Download / Load", function()
@@ -650,9 +650,9 @@ do
 
             Output.Size = {HighX - LowX, HighY - LowY, HighZ - LowZ}
 
-            local FileName = V.File .. "-converted-" .. tostring(os.time()) .. ".txt"
-            writefile(string.format("builds/%s", FileName), Http:JSONEncode(Output))
-
+            local FileName = V.File .. "-converted-" .. tostring(os.time())
+            writefile(string.format("builds/%s", FileName) .. ".s", Http:JSONEncode(Output))
+            setclipboard(FileName)
             Schematica:Notify("Converted!", "Saved file as " .. FileName)
         end
     end)

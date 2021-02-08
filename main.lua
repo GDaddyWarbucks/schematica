@@ -195,7 +195,7 @@ do
 
     V.BuildSection:addButton("Abort", function()
         if V.Build then
-            V.Build:Abort()
+            V.Build.Abort = true
         end
     end)
 end
@@ -250,6 +250,7 @@ do
             local JSONResponse = Http:JSONDecode(Response.Body)
             if JSONResponse.status == "success" then
                 setclipboard(JSONResponse.output)
+                writefile("builds/" .. JSONResponse.output, game.HttpService:JSONEncode(Data))
                 Schematica:Notify("Build Uploaded", "Copied to clipboard")
             else
                 Schematica:Notify("Error", JSONResponse.status)
@@ -381,6 +382,7 @@ do
         local JSONResponse = Http:JSONDecode(Response.Body)
         if JSONResponse.status == "success" then
             setclipboard(JSONResponse.output)
+            writefile("builds/" .. JSONResponse.output, game.HttpService:JSONEncode(Data))
             Schematica:Notify("Build Uploaded", "Copied to clipboard")
         else
             Schematica:Notify("Error", JSONResponse.status)
@@ -574,7 +576,7 @@ do
     end)
 
     V.Final:addButton("Abort", function()
-        V.Printing:Abort()
+        V.Printing.Abort = true
     end)
 end
 
@@ -664,6 +666,7 @@ do
             local JSONResponse = Http:JSONDecode(Response.Body)
             if JSONResponse.status == "success" then
                 setclipboard(JSONResponse.output)
+                writefile("builds/" .. JSONResponse.output, game.HttpService:JSONEncode(Data))
                 Schematica:Notify("Build Uploaded", "Copied to clipboard")
             else
                 Schematica:Notify("Error", JSONResponse.status)

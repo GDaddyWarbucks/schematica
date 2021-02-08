@@ -81,7 +81,7 @@ do
             end
             local Data = Http:JSONDecode(readfile("builds/" .. V.BuildId .. ".s"))
             V.Build = Builder.new(Data)
-            V.SelectSection:updateButton(V.Download, "Found file, loading it")
+            V.SelectSection:updateButton(V.Download, "File loaded!")
         else
             local Response = Http:JSONDecode(game:HttpGet(env.get .. V.BuildId))
             if Response.success == true then
@@ -89,7 +89,7 @@ do
                     V.Build.Model.PrimaryPart.Parent = workspace
                     V.Build:Destroy()
                 end
-                V.Build = Builder.new(Response.data)
+                writefile("builds/" .. V.BuildId .. ".s", game.HttpService:JSONEncode(Response.data))
                 V.SelectSection:updateButton(V.Download, "Downloaded!")
             else
                 if Response.status == 404 then

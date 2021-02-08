@@ -18,7 +18,7 @@ end
 
 if not isfolder("builds") then makefolder("builds") end
 
-local request = request or http_request  or syn and syn.request
+local req = request or http_request or syn and syn.request
 
 local Schematica = Library.new("Schematica")
 local Mouse = Player:GetMouse()
@@ -369,7 +369,7 @@ do
         local Serialize = Serializer.new(V.IndicatorStart.Position, V.IndicatorEnd.Position)
         local Data = Serialize:Serialize()
 
-        local Response = request({
+        local Response = req({
             Url = env.post;
             Body = game.HttpService:JSONEncode(Data);
             Headers = {
@@ -631,7 +631,7 @@ do
             local Serialize = Serializer.new(Center.Position - Size / 2, Center.Position + Size / 2)
             local Data = Serialize:Serialize()
 
-            local Response = request({
+            local Response = req({
                 Url = env.post;
                 Body = game.HttpService:JSONEncode(Data);
                 Headers = {
@@ -705,7 +705,7 @@ do
 
     UploadFile:addButton("Upload", function()
         if isfile("builds/" .. V.ToUpload) then
-            local Response = request({
+            local Response = req({
                 Url = env.post;
                 Body = readfile("builds/" .. V.ToUpload);
                 Headers = {

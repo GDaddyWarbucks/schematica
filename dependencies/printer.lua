@@ -14,7 +14,7 @@ do
         self.Start = Start
         self.End = End
         self.Block = Block
-        self.Abort = false
+        self.Stop = false
 
         return self
     end
@@ -45,13 +45,13 @@ do
         Callback.Start()
         local Start, End = Vector3.new(math.min(self.Start.X, self.End.X), math.min(self.Start.Y, self.End.Y), math.min(self.Start.Z, self.End.Z)), Vector3.new(math.max(self.Start.X, self.End.X), math.max(self.Start.Y, self.End.Y), math.max(self.Start.Z, self.End.Z))
         for X = Start.X, End.X, 3 do
-            if self.Abort then self.Abort = false break end
+            if self.Stop then self.Stop = false break end
 
             for Y = Start.Y, End.Y, 3 do
-                if self.Abort then self.Abort = false break end
+                if self.Stop then self.Stop = false break end
 
                 for Z = Start.Z, End.Z, 3 do
-                    if self.Abort then self.Abort = false break end
+                    if self.Stop then self.Stop = false break end
 
                     local Position = Vector3.new(X, Y, Z)
                     Callback.Build(Position)
@@ -79,11 +79,11 @@ do
         local Start, End = Vector3.new(math.min(self.Start.X, self.End.X), math.min(self.Start.Y, self.End.Y), math.min(self.Start.Z, self.End.Z)), Vector3.new(math.max(self.Start.X, self.End.X), math.max(self.Start.Y, self.End.Y), math.max(self.Start.Z, self.End.Z))
         local Region = Region3.new(Start, End)
         for i, v in next, workspace:FindPartsInRegion3(Region, nil, math.huge) do
-            if self.Abort then self.Abort = false break end
+            if self.Stop then self.Stop = false break end
             if v.Name ~= "bedrock" and (not v:FindFirstChild("portal-to-spawn")) and v.Parent and v.Parent.Name == "Blocks" then
                 local time = os.time()
                 repeat
-                    if v ~= nil and v:IsDescendantOf(workspace) then
+                    if v ~= nil and v:IsDescendantOf(workspace) and self.Stop == false then
                         Callback.Build(v.Position)
                         Hit:InvokeServer({
                             player_tracking_category = "join_from_web";
@@ -102,7 +102,7 @@ do
     end
 
     function Printer:Abort()
-        self.Abort = true
+        self.Stop = true
     end
 end
 

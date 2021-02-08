@@ -18,7 +18,7 @@ end
 
 if not isfolder("builds") then makefolder("builds") end
 
-local request = syn.request or request or http_request 
+local request = request or syn.request or http_request 
 
 local Schematica = Library.new("Schematica")
 local Mouse = Player:GetMouse()

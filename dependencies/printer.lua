@@ -81,6 +81,7 @@ do
         for i, v in next, workspace:FindPartsInRegion3(Region, nil, math.huge) do
             if self.Abort then self.Abort = false break end
             if v.Name ~= "bedrock" and (not v:FindFirstChild("portal-to-spawn")) and v.Parent and v.Parent.Name == "Blocks" then
+                local time = os.time()
                 repeat
                     if v ~= nil and v:IsDescendantOf(workspace) then
                         Callback.Build(v.Position)
@@ -93,7 +94,7 @@ do
                         })
                     end
                     wait()
-                until v == nil or not v:IsDescendantOf(workspace)
+                until v == nil or (not v:IsDescendantOf(workspace)) or os.time() - time > 15
             end
         end
 

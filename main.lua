@@ -143,33 +143,34 @@ do
     end)
 
     print("load preview button loaded")
-    local Rad90 = math.rad(90)
 
     V.Rotate = Build:addSection("Rotation")
     V.XRotate = V.Rotate:addButton("Rotate on X", function()
         if V.Build then
-            V.Build:SetCFrame(V.Indicator.CFrame * CFrame.Angles(Rad90, 0, 0))
+            V.Build:SetCFrame(V.Indicator.CFrame * CFrame.Angles(math.rad(90), 0, 0))
         end
     end)
 
     V.YRotate = V.Rotate:addButton("Rotate on Y", function()
         if V.Build then
-            V.Build:SetCFrame(V.Indicator.CFrame * CFrame.Angles(0, Rad90, 0))
+            V.Build:SetCFrame(V.Indicator.CFrame * CFrame.Angles(0, math.rad(90), 0))
         end
     end)
 
     V.ZRotate = V.Rotate:addButton("Rotate on Z", function()
         if V.Build then
-            V.Build:SetCFrame(V.Indicator.CFrame * CFrame.Angles(0, 0, Rad90))
+            V.Build:SetCFrame(V.Indicator.CFrame * CFrame.Angles(0, 0, math.rad(90)))
         end
     end)
+
+    print("rotation loaded")
 
     V.BuildSection = Build:addSection("Build")
     V.BuildSection:addToggle("Show Build", true, function(willShow)
         V.ShowPreview = willShow
         V.Indicator.Transparency = willShow and 0.5 or 1
         Handles.Parent = willShow and game.CoreGui or game.ReplicatedStorage
-        
+
         if V.Build then
             if V.Build.Model then
                 V.Build:Render(V.ShowPreview)

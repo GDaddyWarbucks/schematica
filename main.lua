@@ -125,6 +125,8 @@ do
         end
     end)
 
+    print("click connection loaded")
+
     V.LoadPreview = V.PositionSettings:addButton("Load Preview", function()
         if V.Indicator and V.Build then
             V.ChangingPosition = false
@@ -140,6 +142,7 @@ do
         end
     end)
 
+    print("load preview button loaded")
     local Rad90 = math.rad(90)
 
     V.Rotate = Build:addSection("Rotation")
@@ -192,6 +195,8 @@ do
             })
         end
     end)
+
+    print("start build button loaded")
 
     V.BuildSection:addButton("Abort", function()
         if V.Build then
@@ -509,7 +514,9 @@ do
             local OriginalPosition = Player.Character.HumanoidRootPart.CFrame
 
             V.Printing = Printer.new(V.IndicatorStart.Position, V.IndicatorEnd.Position)
-            V.Printing:SetBlock(Player.Character:FindFirstChildOfClass("Tool").Name)
+
+            local BlockType = Player.Character:FindFirstChildOfClass("Tool").Name:gsub("Seeds", "")
+            V.Printing:SetBlock(BlockType)
             V.Printing:Build({
                 Start = function()
                     Velocity = Instance.new("BodyVelocity", Player.Character.HumanoidRootPart)

@@ -35,7 +35,8 @@ do
     V.BuildId = '0';
     V.ShowPreview = true;
     V.Build = nil
-
+    V.Visibility = 0.5
+    
     V.Indicator = Instance.new("Part")
     V.Indicator.Size = Vector3.new(3.1, 3.1, 3.1)
     V.Indicator.Transparency = 0.5
@@ -132,6 +133,8 @@ do
             V.ChangingPosition = false
             V.PositionSettings:updateToggle(V.ChangePositionToggle, "Change Position", false)
             V.Build:Init()
+
+            V.Build:SetVisibility(V.Visibility)
             V.Build:Render(V.ShowPreview)
 
             local Box = V.Build.Model:GetBoundingBox()
@@ -180,6 +183,19 @@ do
         end
     end)
 
+    print("show build toggle loaded")
+
+    V.BuildSection:addTextbox("Block transparency", "0.5", function(newTransparency)
+        if tonumber(newTransparency) then
+            V.Visibility = tonumber(newTransparency)
+            if V.Build then
+                print(V.Visibility)
+                V.Build:SetVisibility(V.Visibility)
+            end
+        end
+    end)
+
+    print("dropdown loaded")
     V.BuildSection:addButton("Start Building", function()
         if V.Build then
             local OriginalPosition = Player.Character.HumanoidRootPart.CFrame
@@ -218,7 +234,8 @@ do
     V.ChangeStart = false
     V.ChangeEnd = false
     V.ShowOutline = true
-    
+    V.BuildName = "Untitled"
+
     V.Points = Save:addSection("Set Points")
 
     V.Point1 = V.Points:addToggle("Change Start Point", false, function(willChange)
@@ -345,6 +362,10 @@ do
         SelectionBox.Visible = willShow
     end)
 
+    V.Final:addTextbox("Custom Name", "", function(name)
+        V.BuildName = name
+    end)
+
     V.Final:addButton("Save Area", function()
         local Serialize = Serializer.new(V.IndicatorStart.Position, V.IndicatorEnd.Position)
         local Data = Serialize:Serialize()
@@ -353,7 +374,8 @@ do
             Url = env.post;
             Body = game.HttpService:JSONEncode(Data);
             Headers = {
-                ["Content-Type"] = "application/json"
+                ["Content-Type"] = "application/json",
+                ["Build-Name"] = V.BuildName == "" and "Untitled" or V.BuildName
             };
             Method = "POST"
         })
@@ -564,6 +586,24 @@ end
 do
     local function closestIsland() local L_6_ = workspace:WaitForChild("Islands"):GetChildren() local L_7_ = Player.Character.HumanoidRootPart.Position for L_8_forvar0 = 1, #L_6_ do local L_9_ = L_6_[L_8_forvar0] if L_9_:FindFirstChild("Root") and math.abs(L_9_.PrimaryPart.Position.X - L_7_.X) <= 1000 and math.abs(L_9_.PrimaryPart.Position.Z - L_7_.Z) <= 1000 then return L_9_ end end return workspace.Islands:FindFirstChild(tostring(Player.UserId).."-island") end
 
+    local Players = game.Players
+ 
+    local cache = {}
+    local function getUsernameFromUserId(userId)
+        if cache[userId] then return cache[userId] end
+        local player = Players:GetPlayerByUserId(userId)
+        if player then
+            cache[userId] = player.Name
+            return player.Name
+        end 
+        local name
+        pcall(function ()
+            name = Players:GetNameFromUserIdAsync(userId)
+        end)
+        cache[userId] = name
+        return name
+    end
+
     local Http = game.HttpService
     local Other = Schematica:addPage("Other")
     local ConvertOldSection = Other:addSection("Convert Old Build")
@@ -586,6 +626,7 @@ do
     Other:addSection("Save Closest Island"):addButton("Save", function()
         local Closest = closestIsland()
         if Closest then
+            local Username = getUsernameFromUserId(Closest.UserId.Value) or "An unknown person"
             local Center, Size = Closest:GetBoundingBox()
 
             local Serialize = Serializer.new(Center.Position - Size / 2, Center.Position + Size / 2)
@@ -595,7 +636,8 @@ do
                 Url = env.post;
                 Body = game.HttpService:JSONEncode(Data);
                 Headers = {
-                    ["Content-Type"] = "application/json"
+                    ["Content-Type"] = "application/json";
+                    ["Build-Name"] = Username .. "'s Island"
                 };
                 Method = "POST"
             })
@@ -668,7 +710,8 @@ do
                 Url = env.post;
                 Body = readfile("builds/" .. V.ToUpload);
                 Headers = {
-                    ["Content-Type"] = "application/json"
+                    ["Content-Type"] = "application/json",
+                    ["Build-Name"] = V.ToUpload:gsub("%.(.+)", "")
                 };
                 Method = "POST"
             })

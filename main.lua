@@ -361,9 +361,13 @@ do
         V.ShowOutline = willShow
         V.IndicatorStart.Transparency = willShow and 0.5 or 1
         V.IndicatorEnd.Transparency = willShow and 0.5 or 1
-        StartHandles.Visible = willShow
-        EndHandles.Visible = willShow
-        SelectionBox.Visible = willShow
+        V.Model.Parent = willShow and workspace or game.ReplicatedStorage
+        --[[StartHandles.Parent = willShow and V.Model or game.ReplicatedStorage
+        EndHandles.Parent = willShow and V.Model or game.ReplicatedStorage
+        SelectionBox]]
+        --StartHandles.Visible = willShow
+        --EndHandles.Visible = willShow
+        --SelectionBox.Visible = willShow
     end)
 
     V.Final:addTextbox("Custom Name", "", function(name)
@@ -667,13 +671,13 @@ do
             Output.Blocks = {}
 
             local LowX, LowY, LowZ = 0, 0, 0
-            local HighX, HighY, HighZ = 0, 0, 0
+            local HighX, HighY, HighZ = 3, 3, 3
 
             for Block, Array in next, Data do
                 Output.Blocks[Block] = {}
                 for i, v in next, Array do
                     local Split = strArray(v:split(","))
-
+                    print(Split[3])
                     if Split[1] < LowX then
                         LowX = Split[1]
                     elseif Split[1] > HighX then

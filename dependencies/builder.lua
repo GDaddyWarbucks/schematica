@@ -13,7 +13,7 @@ do
 
     local Blocks = game.ReplicatedStorage.Blocks
     local Place = game.ReplicatedStorage.Remotes.Functions.CLIENT_BLOCK_PLACE_REQUEST
-    local Heartbeat = game.RunService.Heartbeat
+    local Heartbeat = game:GetService("RunService").Heartbeat
 
     function Builder.new(Data)
         local self = setmetatable({}, Builder)

@@ -109,7 +109,7 @@ do
                                 upperSlab = false;
                             })
                         end)
-                        Heartbeat:wait()
+                        wait()
                     end
                 end
             end

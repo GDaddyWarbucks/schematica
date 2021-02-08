@@ -779,15 +779,16 @@ do
 		table.insert(self.modules, toggle)
 		--self:Resize()
 		
-		local active = default
+		self[toggle] = {}
+		self[toggle].active = default
 		self:updateToggle(toggle, nil, active)
 		
 		toggle.MouseButton1Click:Connect(function()
-			active = notactive
-			self:updateToggle(toggle, nil, active)
+			self[toggle].active = not self[toggle].active
+			self:updateToggle(toggle, nil, self[toggle].active)
 			
 			if callback then
-				callback(active, function(...)
+				callback(self[toggle].active, function(...)
 					self:updateToggle(toggle, ...)
 				end)
 			end

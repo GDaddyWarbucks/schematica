@@ -1,5 +1,7 @@
 local baseUrl = "https://raw.githubusercontent.com/Jxl-v/schematica/main/"
-local function require_module(module) return loadstring(game:HttpGet(string.format("%sdependencies/%s", baseUrl, module)))() end
+
+--local function require_module(module) return loadstring(game:HttpGet(string.format("%sdependencies/%s", baseUrl, module)))() end
+local function require_module(module) return loadstring(readfile(string.format("schematica-script-workspace/modules/%s", module)))() end
 
 local Http = game.HttpService
 local env = Http:JSONDecode(game:HttpGet(baseUrl .. "env.json"))
@@ -91,7 +93,7 @@ do
                     V.Build:Destroy()
                 end
                 writefile("builds/" .. V.BuildId .. ".s", game.HttpService:JSONEncode(Response.data))
-                V.Build = Builder.new(Data)
+                V.Build = Builder.new(Response.data)
                 V.SelectSection:updateButton(V.Download, "Downloaded!")
             else
                 if Response.status == 404 then
@@ -323,7 +325,7 @@ do
         StartHandles.Adornee.CFrame = V.CF1 + Vector3.FromNormalId(Face) * (round(Distance / 3) * 3)
     end)
 
-    V.Connections.EndHandleDown = EndHandles.MouseButton1Down:connect(function()
+    V.Connections.EndHandleDown = EndHandles.MouseButton1Down:Connect(function()
         V.CF2 = EndHandles.Adornee.CFrame
     end)
 
@@ -376,6 +378,7 @@ do
         end
     end)
 
+    print("click con added")
     V.Final = Save:addSection("Save")
 
     V.Final:addTextbox("Custom Name", "", function(name)
@@ -410,8 +413,10 @@ do
             Schematica:Notify("Error", JSONResponse.status)
         end
     end)
+    print("click and stuff added")
 end
 
+print("saving added")
 do
     local Print = Schematica:addPage("Printer")
 
@@ -759,5 +764,3 @@ do
         end
     end)
 end
-
-Schematica:setParent()

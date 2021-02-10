@@ -2,6 +2,7 @@ local Builder = {}
 
 do
     local round = math.round
+    local Player = game.Players.LocalPlayer
 
     Builder.__index = Builder
 
@@ -14,6 +15,8 @@ do
     local Blocks = game.ReplicatedStorage.Blocks
     local Place = game.ReplicatedStorage.Remotes.Functions.CLIENT_BLOCK_PLACE_REQUEST
     local Heartbeat = game:GetService("RunService").Heartbeat
+    local EditSign = game.ReplicatedStorage.Remotes.Functions.CLIENT_EDIT_SIGN
+    local Plow = game.ReplicatedStorage.Remotes.Functions.CLIENT_PLOW_BLOCK_REQUEST
 
     function Builder.new(Data)
         local self = setmetatable({}, Builder)
@@ -56,6 +59,19 @@ do
 
                 if Part:IsA("Model") then
                     Part:SetPrimaryPartCFrame(CFrame.new(unpack(v.C)))
+                    
+                    if v.U and Part:FindFirstChild("bottom", true) then
+                        local Bottom = Part:FindFirstChild("bottom", true)
+                        Bottom.Transparency = 1
+
+                        local Top = Part:FindFirstChild("top", true)
+                        Top.Transparency = 0
+                    end
+
+                    if v.T and Part:FindFirstChild("TextBox", true) then
+                        local Box = Part:FindFirstChild("TextBox", true)
+                        Box.Text = v.T
+                    end
                 elseif Part:IsA("BasePart") then
                     Part.CFrame = CFrame.new(unpack(v.C))
                 end
@@ -100,24 +116,51 @@ do
         return false
     end
 
+    function Builder:Place(Args)
+        Place:InvokeServer(Args)
+        if Args.blockType:find("sign") or Args.blockType == "soil" then
+            local Region = Region3.new(Args.cframe.Position, Args.cframe.Position)
+            for i, v in next, workspace:FindPartsInRegion3(Region) do
+                if v.Name == Args.blockType and v.Parent and v.Parent.Name == "Blocks" then
+                    return v
+                end
+            end
+        end
+    end
+
     function Builder:Build(Callback)
         Callback.Start()
         for i, v in next, self.Model:GetChildren() do
+            local Name = ((v.Name == "soil" or v.Name == "dirt") and "grass") or v.Name
             local Part = v:IsA("Model") and v.PrimaryPart or v:IsA("BasePart") and v
             if not self:IsTaken(Part.Position, v.Name) then 
                 if self.Abort then
                     self.Abort = false
                     break
                 else
-                    if v.Name ~= "[Center]" then
+                    if Name ~= "[Center]" then
                         Callback.Build(Part.CFrame)
                         spawn(function()
-                            Place:InvokeServer({
-                                blockType = v.Name;
+                            local Block = self:Place({
+                                blockType = Name;
                                 cframe = Part.CFrame;
                                 player_tracking_category = "join_from_web";
-                                upperSlab = false;
+                                upperSlab = v:FindFirstChild("bottom", true) and v:FindFirstChild("bottom", true).Transparency == 1;
                             })
+                            if Block and v:FindFirstChild("TextBox", true) and Part:FindFirstChild("TextBox", true).Text ~= "" then
+                                EditSign:InvokeServer({
+                                    sign = Block;
+                                    text = Part:FindFirstChild("TextBox", true).Text
+                                })
+                            elseif Block and v.Name == "soil" then
+                                local Tool = Player.Backpack:FindFirstChild("plow") or Player.Character:FindFirstChild("plow")
+                                if Tool then
+                                    Player.Character.Humanoid:EquipTool(Tool)
+                                    Plow:InvokeServer({
+                                        block = Block
+                                    })
+                                end
+                            end
                         end)
                         wait()
                     end

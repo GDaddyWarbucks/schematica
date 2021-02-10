@@ -95,7 +95,7 @@ do
 
             if v.Name ~= "bedrock" and (not v:FindFirstChild("portal-to-spawn")) and v.Parent and v.Parent.Name == "Blocks" then
                 if v.Parent.Parent.Root.CFrame:PointToObjectSpace(v.Position) ~= UnbreakableGrassPosition then
-                    local time = os.time()
+                    --local time = os.time()
                     repeat
                         if v ~= nil and v:IsDescendantOf(workspace) then
                             Callback.Build(v.Position)
@@ -108,7 +108,7 @@ do
                             })
                         end
                         wait()
-                    until v == nil or (not v:IsDescendantOf(workspace)) or os.time() - time > 15 or self.Abort == true
+                    until v == nil or (not v:IsDescendantOf(workspace)) or self.Abort == true
                 end
             end
         end

@@ -14,6 +14,7 @@ do
     end
 
     function Serializer.new(Start, End)
+        print("new ser")
         local self = setmetatable({}, Serializer)
         
         self.Start = Start
@@ -45,7 +46,11 @@ do
         for i, v in next, workspace:FindPartsInRegion3(Region, nil, math.huge) do
             if v.Parent.Name == "Blocks" then
                 local Clone = v:Clone()
-                Clone:ClearAllChildren()
+
+                if not (Clone:FindFirstChild("Text") or Clone:FindFirstChild("top") or Clone:FindFirstChild("bottom")) then
+                    Clone:ClearAllChildren()
+                end
+
                 Clone.Parent = Model
                 
                 if Output[v.Name] == nil then 
@@ -59,22 +64,19 @@ do
         local Center = self:Format(CFrame.new((Start + End) / 2)) - Vector3.new(2, 0, 2)
 
         for i, v in next, Model:GetChildren() do
+            local Inserted = {}
             if v:IsA("Model") then
-                table.insert(Output[v.Name], {
-                    C = {Center:ToObjectSpace(v.PrimaryPart.CFrame):components()};
-                })
+                Inserted.C = {Center:ToObjectSpace(v.PrimaryPart.CFrame):components()}
             elseif v:IsA("BasePart") then
-                if v.Name:find("Slab") and v:FindFirstChild("top") then
-                    table.insert(Output[v.Name], {
-                        C = {Center:ToObjectSpace(v.CFrame):components()};
-                        U = true
-                    })
-                else
-                    table.insert(Output[v.Name], {
-                        C = {Center:ToObjectSpace(v.CFrame):components()};
-                    })
+                Inserted.C = {Center:ToObjectSpace(v.CFrame):components()};
+                if v:FindFirstChild("bottom") and v.bottom.Transparency == 1 then
+                    Inserted.U = true
+                end
+                if v:FindFirstChild("Text") then
+                    Inserted.T = v.Text.Value
                 end
             end
+            table.insert(Output[v.Name], Inserted)
         end
 
         return {Size = {Size.X, Size.Y, Size.Z}, Blocks = Output}
